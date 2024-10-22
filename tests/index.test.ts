@@ -24,3 +24,10 @@ test("OpenAPI Plugin", async () => {
     expect(swaggerResponse.status).toBe(200)
     expect(swaggerResponse.headers.get("content-type")?.trim()).toBe("text/html;charset=utf-8")
 });
+
+test("OpenAPI Plugin with path parameters", async () => {
+    const app = new Elysia()
+    app.get("/:id/:name/test/:phone", () => "Hello World")
+    app.use(openAPI({}))
+    expect(oas.paths["/{id}/{name}/test/{phone}"]["get"].parameters.length > 0).toBeTrue()
+})

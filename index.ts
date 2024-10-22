@@ -1,4 +1,5 @@
 import Elysia from "elysia";
+import path from "path";
 
 export const oas: any = {
     "openapi": "3.1.0",
@@ -47,6 +48,10 @@ export function objectToRequestBodyProperties(obj: any) {
     }
 }
 
+function changePathFormat(path: string): string {
+    return path.replace(/:(\w+)/g, '{$1}');
+}
+
 type OpenAPIOptions = {
     title?: string
     version?: string
@@ -61,14 +66,16 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
     }
 
     for (const history of elysia.router.history) {
-        const path = history.path
+        let path = history.path
         const method = history.method.toLowerCase()
         const { body, query, response, tags } = history.hooks
+        path = changePathFormat(path)
+        
         if (!oas.paths[path]) oas.paths[path] = {}
         if (!oas.paths[path][method]) oas.paths[path][method] = {}
         if (tags) oas.paths[path][method].tags = tags
         if (body) {
-            let properties = {...body.properties}
+            let properties = { ...body.properties }
             let requestBodyContentType = "application/json"
             Object.entries(body.properties).forEach(([key, value]) => {
                 if (typeof value === "object" && value !== null) {
@@ -141,6 +148,14 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                 }
             }
         }
+        const pathParams = path.match(/\{(\w+)\}/g)
+        if (pathParams) for (const param of pathParams) {
+            oas.paths[path][method].parameters.push({
+                name: param.slice(1, -1),
+                in: "path",
+                require: true
+            })
+        }
         oas.paths[path][method].responses = {}
         if (response) {
             switch (response.type) {
@@ -161,9 +176,12 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
         }
     }
 
+    const __dirname = import.meta.dir;
+    const assets = path.join(__dirname, "assets");
+
     elysia.get("/spec.json", () => oas)
-    elysia.get("/swagger", () => Bun.file("assets/swagger.html"))
-    elysia.get("/swagger.css", () => Bun.file("assets/swagger.css"))
+    elysia.get("/swagger", () => Bun.file(path.join(assets, "swagger.html")));
+    elysia.get("/swagger.css", () => Bun.file(path.join(assets, "swagger.css")));
 
     return elysia
 }
