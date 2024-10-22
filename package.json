@@ -15,11 +15,9 @@
     "bun-types": "latest",
     "typescript": "^5.6.3"
   },
-  "dependencies": {
-    "elysia": "latest"
-  },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "elysia": "latest"
   },
   "publishConfig": {
     "access": "public"
