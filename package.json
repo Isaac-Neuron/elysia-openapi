@@ -1,5 +1,5 @@
 {
-  "name": "@elysia/openapi",
+  "name": "elysia-openapi",
   "version": "0.0.1",
   "description": "Automatically generate OpenAPI documentation for Elysia",
   "main": "dist/index.js",
@@ -20,5 +20,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
