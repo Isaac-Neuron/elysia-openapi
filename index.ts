@@ -68,12 +68,12 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
     for (const history of elysia.router.history) {
         let path = history.path
         const method = history.method.toLowerCase()
-        const { body, query, response, tags } = history.hooks
+        const { body, query, response, details } = history.hooks
         path = changePathFormat(path)
         
         if (!oas.paths[path]) oas.paths[path] = {}
         if (!oas.paths[path][method]) oas.paths[path][method] = {}
-        if (tags) oas.paths[path][method].tags = tags
+        if (details?.tags) oas.paths[path][method].tags = details.tags
         if (body) {
             let properties = { ...body.properties }
             let requestBodyContentType = "application/json"
