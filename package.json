@@ -1,6 +1,6 @@
 {
   "name": "elysia-openapi",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Automatically generate OpenAPI documentation for Elysia",
   "main": "dist/index.js",
   "module": "dist/index.js",
