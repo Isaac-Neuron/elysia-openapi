@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import Elysia from "elysia";
+import Elysia, { t } from "elysia";
 import { oas, openAPI } from "../index";
 
 const PORT = process.env.PORT || 3000
@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 3000
 test("OpenAPI Plugin", async () => {
     const app = new Elysia()
     app.get("/", () => "Hello World")
+    app.post("/refresh-token", () => "Hello World", {
+        body: t.String({ examples: ["1234567890"] })
+    })
     app.use(openAPI({
         title: "Test API",
         version: "1.0.0",

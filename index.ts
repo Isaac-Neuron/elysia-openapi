@@ -77,7 +77,7 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
         if (body) {
             let properties = { ...body.properties }
             let requestBodyContentType = "application/json"
-            Object.entries(body.properties).forEach(([key, value]) => {
+            if (!body.type.match(/string|number|boolean/)) Object.entries(body.properties).forEach(([key, value]) => {
                 if (typeof value === "object" && value !== null) {
                     const propertieObject = value as any
                     if (propertieObject.format === "binary") {
