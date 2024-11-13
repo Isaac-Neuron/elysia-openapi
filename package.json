@@ -1,6 +1,6 @@
 {
   "name": "elysia-openapi",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Automatically generate OpenAPI documentation for Elysia",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -8,6 +8,7 @@
   "type": "module",
   "files": ["dist"],
   "scripts": {
+    "dev": "bun run --hot ./tests/demo.ts",
     "build": "bun build ./index.ts --outdir ./dist",
     "prepublishOnly": "bun run build"
   },
@@ -21,5 +22,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "elysia-openapi": "."
   }
 }

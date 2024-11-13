@@ -172,6 +172,19 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                         }
                     }
                     break
+                case "string":
+                    oas.paths[path][method].responses[200] = {
+                        description: `Returns a string`,
+                        content: {
+                            "text/plain": {
+                                schema: {
+                                    type: "string",
+                                    example: response.example
+                                }
+                            }
+                        }
+                    }
+                    break
             }
         }
     }
