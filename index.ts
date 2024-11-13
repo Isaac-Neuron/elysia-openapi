@@ -116,7 +116,7 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                 case "string":
                     oas.paths[path][method].requestBody = {
                         content: {
-                            "application/json": {
+                            "text/plain": {
                                 schema: {
                                     type: "string",
                                     example: body.example
