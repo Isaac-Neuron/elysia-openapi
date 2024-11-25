@@ -4,6 +4,10 @@ import { openAPI } from "../index";
 const app = new Elysia()
 
 app.post("/", ({ body }) => `Hello ${body.name}`, { 
+    query: t.Object({
+        name: t.String(),
+        age: t.Numeric()
+    }),
     body: t.Object({
         name: t.String()
     }),

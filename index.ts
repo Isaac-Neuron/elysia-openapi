@@ -134,12 +134,15 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                 for (const [paramKey, object] of Object.entries(query.properties)) {
                     if (typeof object === "object" && object !== null) {
                         const paramObject = object as any
+                        const anyOf = paramObject.anyOf as any[]
                         const optionalSymbol = Object.getOwnPropertySymbols(paramObject).find(sym => sym.toString() === 'Symbol(TypeBox.Optional)');
                         oas.paths[path][method].parameters.push({
                             name: paramKey,
                             in: "query",
                             require: !optionalSymbol || paramObject[optionalSymbol] !== "Optional",
-                            example: paramObject.examples ? paramObject.examples[Math.floor(Math.random() * paramObject.examples.length)] : undefined,
+                            example: paramObject.examples
+                                ? paramObject.examples[Math.floor(Math.random() * paramObject.examples.length)]
+                                : anyOf && anyOf.find(anyOfItem => anyOfItem.type === "number") ? 1 : undefined,
                             schema: {
                                 type: paramObject.type,
                             }
