@@ -48,6 +48,16 @@ export function objectToRequestBodyProperties(obj: any) {
     }
 }
 
+const getPropertiesExample = (properties: any) => {
+    const anyOf = properties.anyOf as any[] | undefined
+    const propertiesEnum = properties.enum as any[] | undefined
+    let example: any = undefined
+    if (properties.examples) example = properties.examples[Math.floor(Math.random() * properties.examples.length)]
+    else if (anyOf && anyOf.find(anyOfItem => anyOfItem.type === "number")) example = 1
+    else if (propertiesEnum) example = propertiesEnum[Math.floor(Math.random() * propertiesEnum.length)]
+    return example
+}
+
 function changePathFormat(path: string): string {
     return path.replace(/:(\w+)/g, '{$1}');
 }
@@ -70,7 +80,7 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
         const method = history.method.toLowerCase()
         const { body, query, response, detail } = history.hooks
         path = changePathFormat(path)
-        
+
         if (!oas.paths[path]) oas.paths[path] = {}
         if (!oas.paths[path][method]) oas.paths[path][method] = {}
         if (detail?.tags) oas.paths[path][method].tags = detail.tags
@@ -134,15 +144,12 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                 for (const [paramKey, object] of Object.entries(query.properties)) {
                     if (typeof object === "object" && object !== null) {
                         const paramObject = object as any
-                        const anyOf = paramObject.anyOf as any[]
                         const optionalSymbol = Object.getOwnPropertySymbols(paramObject).find(sym => sym.toString() === 'Symbol(TypeBox.Optional)');
                         oas.paths[path][method].parameters.push({
                             name: paramKey,
                             in: "query",
                             require: !optionalSymbol || paramObject[optionalSymbol] !== "Optional",
-                            example: paramObject.examples
-                                ? paramObject.examples[Math.floor(Math.random() * paramObject.examples.length)]
-                                : anyOf && anyOf.find(anyOfItem => anyOfItem.type === "number") ? 1 : undefined,
+                            example: getPropertiesExample(paramObject),
                             schema: {
                                 type: paramObject.type,
                             }
