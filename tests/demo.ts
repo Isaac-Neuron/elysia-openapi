@@ -12,8 +12,14 @@ app.post("/", ({ body }) => `Hello ${body.name}`, {
     body: t.Object({
         name: t.String({ examples: ["John", "Jane"] }),
         age: t.Numeric({ examples: [20, 30] }),
-        gender: t.UnionEnum(["male", "female", "other"])
+        gender: t.UnionEnum(["male", "female", "other"]),
+        names: t.Array(t.String({ examples: ["John", "Jane"] }))
     }),
+    response: t.String() 
+})
+
+app.post("2/", ({ body }) => `Hello ${body}`, { 
+    body: t.Array(t.String({ examples: ["John", "Jane"] })),
     response: t.String() 
 })
 

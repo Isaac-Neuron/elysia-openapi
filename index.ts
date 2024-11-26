@@ -87,7 +87,7 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
         if (body) {
             let properties = { ...body.properties }
             let requestBodyContentType = "application/json"
-            if (!body.type.match(/string|number|boolean/)) Object.entries(body.properties).forEach(([key, value]) => {
+            if (!body.type.match(/string|number|boolean|array/)) Object.entries(body.properties).forEach(([key, value]) => {
                 if (typeof value === "object" && value !== null) {
                     const propertieObject = value as any
                     if (propertieObject.format === "binary") {
@@ -136,6 +136,15 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                         required: true
                     }
                     break
+                case "array":
+                    oas.paths[path][method].requestBody = {
+                        content: {
+                            "application/json": {
+                                schema: { type: "array", items: body.items }
+                            }
+                        },
+                        required: true
+                    }
             }
         }
         oas.paths[path][method].parameters = []
