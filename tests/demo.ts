@@ -3,34 +3,16 @@ import { openAPI } from "../index";
 
 const app = new Elysia()
 
-app.post("/", ({ body }) => `Hello ${body.name}`, { 
-    query: t.Object({
-        name: t.String({ examples: ["John", "Jane"] }),
-        age: t.Numeric({ examples: [20, 30] }),
-        gender: t.UnionEnum(["male", "female", "other"])
-    }),
+app.post("/object-body-example", ({ body }) => JSON.stringify(body), { 
     body: t.Object({
-        name: t.String({ examples: ["John", "Jane"] }),
-        age: t.Numeric({ examples: [20, 30] }),
-        gender: t.UnionEnum(["male", "female", "other"]),
-        names: t.Array(t.String({ examples: ["John", "Jane"] }))
+        string: t.String({ examples: ["String 1", "String 2"] }),
+        number: t.Number({ examples: [20, 30] }),
+        numeric: t.Numeric({ examples: [20, 30] }),
+        boolean: t.Boolean({ examples: [true, false] }),
+        literal: t.Literal("A"),
+        union: t.Union([t.Literal("A"), t.Literal(4), t.Boolean()]),
+        array: t.Array(t.String({ examples: ["String 1", "String 2"] })),
     }),
-    response: t.String() 
-})
-
-app.post("2/", ({ body }) => `Hello ${body}`, { 
-    body: t.Array(t.String({ examples: ["John", "Jane"] })),
-    response: t.String() 
-})
-
-app.patch("/literal-attributes", ({ body }) => `Hello ${body}`, {
-    body: t.Object({
-        single: t.Literal("A"),
-        union: t.Union([t.Literal("A"), t.Literal("B")]),
-        single_optional: t.Optional(t.Literal("A")),
-        union_optional: t.Optional(t.Union([t.Literal("A"), t.Literal("B")]))
-    }),
-    response: t.String({ examples: ["Hello A", "Hello B"] }) 
 })
 
 app.use(openAPI({
