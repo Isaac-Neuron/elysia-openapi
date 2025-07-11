@@ -23,6 +23,16 @@ app.post("2/", ({ body }) => `Hello ${body}`, {
     response: t.String() 
 })
 
+app.patch("/literal-attributes", ({ body }) => `Hello ${body}`, {
+    body: t.Object({
+        single: t.Literal("A"),
+        union: t.Union([t.Literal("A"), t.Literal("B")]),
+        single_optional: t.Optional(t.Literal("A")),
+        union_optional: t.Optional(t.Union([t.Literal("A"), t.Literal("B")]))
+    }),
+    response: t.String({ examples: ["Hello A", "Hello B"] }) 
+})
+
 app.use(openAPI({
     title: "Test API",
     version: "1.0.0",

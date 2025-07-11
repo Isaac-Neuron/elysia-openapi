@@ -9,12 +9,12 @@
   "files": ["dist"],
   "scripts": {
     "dev": "bun run --hot ./tests/demo.ts",
-    "build": "bun build ./index.ts --outdir ./dist",
+    "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
-    "bun-types": "latest",
-    "typescript": "^5.6.3"
+    "@types/bun": "^1.2.18",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0",
