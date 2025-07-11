@@ -25,6 +25,13 @@ app.post("/array", ({ body }) => JSON.stringify(body), {
     }
 })
 
+app.post("/plain_text", ({ body }) => body, { 
+    body: t.String({ examples: ["String 1", "String 2"] }),
+    detail: {
+        tags: ["Request Body"]
+    }
+})
+
 app.post("/array_of_objects", ({ body }) => body, { 
     body: t.Array(t.Object({
         string: t.String({ examples: ["String 1", "String 2"] }),
@@ -93,6 +100,24 @@ app.get("/object", () => {
         boolean: t.Boolean({ examples: [true, false] }),
         literal: t.Literal("A"),
     }),
+    detail: {
+        tags: ["Response Body"]
+    }
+})
+
+app.get("/array", () => {
+    return ["string", "string2"]
+}, {
+    response: t.Array(t.String({ examples: ["String 1", "String 2"] })),
+    detail: {
+        tags: ["Response Body"]
+    }
+})
+
+app.get("/plain_text", () => {
+    return "Hello World"
+}, {
+    response: t.String({ examples: ["Hello World", "Hello World 2"] }),
     detail: {
         tags: ["Response Body"]
     }

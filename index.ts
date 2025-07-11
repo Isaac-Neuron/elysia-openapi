@@ -129,7 +129,7 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                             "text/plain": {
                                 schema: {
                                     type: "string",
-                                    example: body.example
+                                    examples: body.examples
                                 }
                             }
                         },
@@ -192,13 +192,16 @@ export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
                     }
                     break
                 case "string":
+                    if (!Array.isArray(response.examples)) response.examples = [response.examples]
+                    let example = ""
+                    if (Array.isArray(response.examples)) example = response.examples[Math.floor(Math.random() * response.examples.length)]
                     oas.paths[path][method].responses[200] = {
                         description: `Returns a string`,
                         content: {
                             "text/plain": {
                                 schema: {
                                     type: "string",
-                                    example: response.example
+                                    example
                                 }
                             }
                         }
