@@ -68,6 +68,69 @@ type OpenAPIOptions = {
     description?: string
 }
 
+export const jsonSchemaToTypeScript = (schema: any): string => {
+    if (typeof schema !== "object" || schema === null) {
+        return typeof schema;
+    }
+
+    switch (schema.type) {
+        case "object":
+            if (schema.properties) {
+                const properties = Object.entries(schema.properties)
+                    .map(([key, value]: [string, any]) => {
+                        const isOptional = schema.required && !schema.required.includes(key);
+                        const optionalSymbol = Object.getOwnPropertySymbols(value).find(sym => sym.toString() === 'Symbol(TypeBox.Optional)');
+                        const optional = isOptional || (optionalSymbol && value[optionalSymbol] === "Optional");
+                        return `  ${key}${optional ? '?' : ''}: ${jsonSchemaToTypeScript(value)}`;
+                    })
+                    .join(';\n');
+                return `{\n${properties};\n}`;
+            }
+            return "Record<string, any>";
+
+        case "array":
+            if (schema.items) {
+                return `Array<${jsonSchemaToTypeScript(schema.items)}>`;
+            }
+            return "any[]";
+
+        case "string":
+            if (schema.enum) {
+                return schema.enum.map((value: string) => `"${value}"`).join(' | ');
+            }
+            if (schema.format === "binary") {
+                return "File";
+            }
+            return "string";
+
+        case "number":
+        case "integer":
+            if (schema.enum) {
+                return schema.enum.join(' | ');
+            }
+            return "number";
+
+        case "boolean":
+            return "boolean";
+
+        case "null":
+            return "null";
+
+        default:
+            if (schema.anyOf) {
+                return schema.anyOf.map((subSchema: any) => jsonSchemaToTypeScript(subSchema)).join(' | ');
+            }
+            if (schema.oneOf) {
+                return schema.oneOf.map((subSchema: any) => jsonSchemaToTypeScript(subSchema)).join(' | ');
+            }
+            if (schema.allOf) {
+                return schema.allOf.map((subSchema: any) => jsonSchemaToTypeScript(subSchema)).join(' & ');
+            }
+            
+            return "any";
+    }
+};
+
 export const openAPI = (options: OpenAPIOptions) => (elysia: Elysia) => {
     oas.info = {
         title: options.title || "Elysia API",
